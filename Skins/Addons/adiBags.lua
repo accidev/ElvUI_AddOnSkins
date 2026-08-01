@@ -228,7 +228,14 @@ S:AddCallbackForAddon("AdiBags", "AdiBags", function()
 		frame.sortButton:SetScript("OnEnter", B.Tooltip_Show)
 		frame.sortButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
 		frame.sortButton:SetScript("OnClick", function()
-			B:CommandDecorator(B.SortBags, "bags")()
+			if frame.isBank then
+				if E.db.bags.disableBankSort then
+					return
+				end
+				B:CommandDecorator(B.SortBags, "bank")()
+			else
+				B:CommandDecorator(B.SortBags, "bags")()
+			end
 		end)
 		RegisterFrame(frame.sortButton)
 
