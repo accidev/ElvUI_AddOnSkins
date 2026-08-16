@@ -538,39 +538,13 @@ end
 S:AddCallbackForAddon("Auctionator", "Auctionator", function()
 	if not E.private.addOnSkins.Auctionator then return end
 
-	hooksecurefunc(AuctionatorTabContainerMixin, "OnLoad", function(self, ...)
-		local tab = AuctionatorTabs_ShoppingLists
-		if (tab) then
-			tab.HighlightLeft:StripTextures()
-			tab.HighlightMiddle:StripTextures()
-			tab.HighlightRight:StripTextures()
-			S:HandleTab(tab)
+	hooksecurefunc(AuctionatorTabContainerMixin, "OnLoad", function()
+		for _, name in ipairs({ "AuctionatorTabs_ShoppingLists", "AuctionatorTabs_Selling", "AuctionatorTabs_Cancelling", "AuctionatorTabs_Auctionator" }) do
+			local tab = _G[name]
+			if tab then
+				S:HandleTab(tab)
+			end
 		end
-		local tab = AuctionatorTabs_Selling
-		if (tab) then
-			tab.HighlightLeft:StripTextures()
-			tab.HighlightMiddle:StripTextures()
-			tab.HighlightRight:StripTextures()
-			S:HandleTab(tab)
-		end
-		local tab = AuctionatorTabs_Cancelling
-		if (tab) then
-			tab.HighlightLeft:StripTextures()
-			tab.HighlightMiddle:StripTextures()
-			tab.HighlightRight:StripTextures()
-			S:HandleTab(tab)
-		end
-		local tab = AuctionatorTabs_Auctionator
-		if (tab) then
-			tab.HighlightLeft:StripTextures()
-			tab.HighlightMiddle:StripTextures()
-			tab.HighlightRight:StripTextures()
-			S:HandleTab(tab)
-		end
-		-- S:HandleTab(AuctionatorTabs_ShoppingLists)
-		-- S:HandleTab(AuctionatorTabs_Selling)
-		-- S:HandleTab(AuctionatorTabs_Cancelling)
-		-- S:HandleTab(AuctionatorTabs_Auctionator)
 
 		HandleFirstAucTab()
 		HandleAddItemAucFrame()
