@@ -93,26 +93,44 @@ function EMB:EmbedUpdate()
 	if self:CheckEmbed("Details") then self:EmbedDetails() end
 end
 
-function EMB:SetHooks()
-	hooksecurefunc(E:GetModule("Chat"), "PositionChat", function(self, override)
-		if override then
-			EMB:EmbedUpdate()
+function EMB:HookChatPanelFade(panel, isRight)
+	local function OnFade()
+		panel:Hide()
+
+		local embedRight = E.db.addOnSkins.embed.rightChatPanel
+		if (isRight and embedRight) or (not isRight and not embedRight) then
+			EMB.switchButton:Hide()
 		end
-	end)
+	end
+
+	if type(panel.fadeFunc) == "function" then
+		hooksecurefunc(panel, "fadeFunc", OnFade)
+	elseif panel.FadeObject and type(panel.FadeObject.finishedFunc) == "function" then
+		hooksecurefunc(panel.FadeObject, "finishedFunc", function()
+			if panel:GetAlpha() == 0 then
+				OnFade()
+			end
+		end)
+	end
+end
+
+function EMB:SetHooks()
+	local CH = E:GetModule("Chat")
+
+	if CH.PositionChats then
+		hooksecurefunc(CH, "PositionChats", function() EMB:EmbedUpdate() end)
+	else
+		hooksecurefunc(CH, "PositionChat", function(_, override)
+			if override then
+				EMB:EmbedUpdate()
+			end
+		end)
+	end
+
 	hooksecurefunc(E:GetModule("Layout"), "ToggleChatPanels", function() EMB:EmbedUpdate() end)
 
-	hooksecurefunc(LeftChatPanel, "fadeFunc", function()
-		LeftChatPanel:Hide()
-		if not E.db.addOnSkins.embed.rightChatPanel then
-			EMB.switchButton:Hide()
-		end
-	end)
-	hooksecurefunc(RightChatPanel, "fadeFunc", function()
-		RightChatPanel:Hide()
-		if E.db.addOnSkins.embed.rightChatPanel then
-			EMB.switchButton:Hide()
-		end
-	end)
+	self:HookChatPanelFade(LeftChatPanel, false)
+	self:HookChatPanelFade(RightChatPanel, true)
 
 	local rightChatToggleOnClickOriginal = RightChatToggleButton:GetScript("OnClick")
 	RightChatToggleButton:RegisterForClicks("AnyDown")
@@ -165,6 +183,24 @@ function EMB:SetHooks()
 	end)
 end
 
+function EMB:DataPanelEnabled(right)
+	local db = E.db.datatexts
+	local enabled
+
+	if right then
+		enabled = db.rightChatPanel
+	else
+		enabled = db.leftChatPanel
+	end
+
+	if enabled == nil and db.panels then
+		local panel = db.panels[right and "RightChatDataPanel" or "LeftChatDataPanel"]
+		enabled = panel and panel.enable
+	end
+
+	return enabled
+end
+
 function EMB:WindowResize()
 	if not self.embedCreated then return end
 
@@ -173,8 +209,8 @@ function EMB:WindowResize()
 	local chatPanel = db.rightChatPanel and RightChatPanel or LeftChatPanel
 	local chatTab = db.rightChatPanel and RightChatTab or LeftChatTab
 	local chatData = db.rightChatPanel and RightChatDataPanel or LeftChatToggleButton
-	local topRight = chatData == RightChatDataPanel and (E.db.datatexts.rightChatPanel and "TOPLEFT" or "BOTTOMLEFT") or chatData == LeftChatToggleButton and (E.db.datatexts.leftChatPanel and "TOPLEFT" or "BOTTOMLEFT")
-	local yOffset = (chatData == RightChatDataPanel and E.db.datatexts.rightChatPanel and SPACING) or (chatData == LeftChatToggleButton and E.db.datatexts.leftChatPanel and SPACING) or 0
+	local topRight = chatData == RightChatDataPanel and (self:DataPanelEnabled(true) and "TOPLEFT" or "BOTTOMLEFT") or chatData == LeftChatToggleButton and (self:DataPanelEnabled() and "TOPLEFT" or "BOTTOMLEFT")
+	local yOffset = (chatData == RightChatDataPanel and self:DataPanelEnabled(true) and SPACING) or (chatData == LeftChatToggleButton and self:DataPanelEnabled() and SPACING) or 0
 	local xOffset = (E.db.chat.panelBackdrop == "RIGHT" and db.rightChatPanel and 0) or (E.db.chat.panelBackdrop == "LEFT" and not db.rightChatPanel and 0) or (E.db.chat.panelBackdrop == "SHOWBOTH" and 0) or E.Border*3 - E.Spacing
 	local isDouble = db.embedType == "DOUBLE"
 
@@ -219,8 +255,11 @@ function EMB:UpdateSwitchButton()
 		self.switchButton.text:SetText(isDouble and db.leftWindow.." / "..db.rightWindow or db.leftWindow)
 		self.switchButton:ClearAllPoints()
 
-		if E.Chat.RightChatWindowID and _G["ChatFrame"..E.Chat.RightChatWindowID.."Tab"]:IsVisible() then
-			self.switchButton:Point("LEFT", _G["ChatFrame"..E.Chat.RightChatWindowID.."Tab"], "RIGHT", 0, 0)
+		local rightChatID = E.Chat.RightChatWindowID or (E.Chat.RightChatWindow and E.Chat.RightChatWindow:GetID())
+		local rightChatTab = rightChatID and _G["ChatFrame"..rightChatID.."Tab"]
+
+		if rightChatTab and rightChatTab:IsVisible() then
+			self.switchButton:Point("LEFT", rightChatTab, "RIGHT", 0, 0)
 		else
 			self.switchButton:Point(db.rightChatPanel and "LEFT" or "RIGHT", chatTab, 5, 4)
 		end

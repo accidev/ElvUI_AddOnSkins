@@ -1,13 +1,75 @@
 local E, L, V, P, G = unpack(ElvUI)
 local EP = E.Libs.EP
 local AS = E:NewModule("AddOnSkins")
+local S = E:GetModule("Skins")
 
 local AddOnName = ...
 
 local lower = string.lower
+local select, type = select, type
 
 local GetAddOnInfo = GetAddOnInfo
 local IsAddOnLoadOnDemand = IsAddOnLoadOnDemand
+
+if not S.SetTemplate then
+	local HandleScrollBar = S.HandleScrollBar
+
+	function S:SetTemplate(frame, ...)
+		frame:SetTemplate(...)
+	end
+
+	function S:CreateBackdrop(frame, ...)
+		frame:CreateBackdrop(...)
+	end
+
+	function S:SetInside(obj, ...)
+		obj:SetInside(...)
+	end
+
+	function S:Kill(object)
+		object:Kill()
+	end
+
+	function S:StripTextures(object, kill, alpha)
+		object:StripTextures(kill, alpha)
+	end
+
+	function S:StripTexture(object, texture, kill, alpha)
+		local path = lower(texture)
+
+		local function clean(region)
+			if kill then
+				region:Kill()
+			elseif alpha then
+				region:SetAlpha(0)
+			else
+				region:SetTexture(E.ClearTexture)
+			end
+		end
+
+		if object:IsObjectType("Texture") then
+			local tex = object:GetTexture()
+			if type(tex) == "string" and lower(tex) == path then
+				clean(object)
+			end
+		elseif object.GetNumRegions then
+			for i = 1, object:GetNumRegions() do
+				local region = select(i, object:GetRegions())
+				local tex = region and region.IsObjectType and region:IsObjectType("Texture") and region:GetTexture()
+				if type(tex) == "string" and lower(tex) == path then
+					clean(region)
+				end
+			end
+		end
+	end
+
+	function S:HandleScrollBar(frame, thumbY, thumbX, template)
+		if thumbY == true then thumbY = nil end
+		if thumbX == true then thumbX = nil end
+
+		HandleScrollBar(self, frame, thumbY, thumbX, template)
+	end
+end
 
 local addonList = {
 	"Omen",
