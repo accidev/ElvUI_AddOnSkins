@@ -221,7 +221,7 @@ S:AddCallbackForAddon("Auc-Advanced", "Auc-Advanced", function()
 
 		S:HandleScrollBar(frame.baglist.sheet.panel.vScroll)
 		S:HandleScrollBar(frame.resultlist.sheet.panel.vScroll)
-		S:HandleScrollBar(frame.resultlist.sheet.panel.hScroll, true)
+		S:HandleScrollBar(frame.resultlist.sheet.panel.hScroll)
 
 		S:HandleButton(frame.additem)
 		S:HandleButton(frame.removeitem)

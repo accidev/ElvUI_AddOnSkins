@@ -128,7 +128,7 @@ S:AddCallbackForAddon("BeanCounter", "BeanCounter", function()
 		frame.resultlist:Point("BOTTOM", 0, 27)
 
 		S:HandleScrollBar(frame.resultlist.sheet.panel.vScroll)
-		S:HandleScrollBar(frame.resultlist.sheet.panel.hScroll, true)
+		S:HandleScrollBar(frame.resultlist.sheet.panel.hScroll)
 
 		frame.resultlist.sheet.panel.vScroll:Point("TOPLEFT", frame.resultlist.sheet.panel, "TOPRIGHT", 3, -16)
 		frame.resultlist.sheet.panel.vScroll:Point("BOTTOMLEFT", frame.resultlist.sheet.panel, "BOTTOMRIGHT", 3, 19)

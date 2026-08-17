@@ -91,7 +91,7 @@ S:AddCallbackForAddon("Skada", "Skada", function()
 
 	hooksecurefunc(Skada, "SetTooltipPosition", function(self, tt, frame)
 		if self.db.profile.tooltippos == "default" then
-			local mover = _G.ElvTooltipMover or _G.TooltipMover
+			local mover = _G.TooltipMover
 
 			if not (mover and E:HasMoverBeenMoved(mover:GetName())) then
 				if ElvUI_ContainerFrame and ElvUI_ContainerFrame:IsShown() then
