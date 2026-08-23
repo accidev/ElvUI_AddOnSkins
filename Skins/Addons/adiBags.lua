@@ -35,6 +35,13 @@ local function IsSupportedVersion()
 	return (minor or 0) >= REQUIRED_MINOR
 end
 
+local function CropIcon(texture)
+	if not texture then return end
+	if texture.GetAtlas and texture:GetAtlas() then return end
+
+	texture:SetTexCoord(unpack(E.TexCoords))
+end
+
 S:AddCallbackForAddon("AdiBags", "AdiBags", function()
 	if not E.private.addOnSkins.AdiBags then return end
 
@@ -266,7 +273,7 @@ S:AddCallbackForAddon("AdiBags", "AdiBags", function()
 
 		local bagSlotsTex = bagSlots:GetNormalTexture()
 		bagSlotsTex:SetInside()
-		bagSlotsTex:SetTexCoord(unpack(E.TexCoords))
+		CropIcon(bagSlotsTex)
 
 		frame.BagSlotPanel:SetTemplate("Transparent")
 		RegisterFrame(frame.BagSlotPanel)
@@ -344,12 +351,8 @@ S:AddCallbackForAddon("AdiBags", "AdiBags", function()
 					S:HandleButton(widget)
 				else
 					widget:StyleButton(true, true)
-					if widget:GetNormalTexture() then
-						widget:GetNormalTexture():SetTexCoord(unpack(E.TexCoords))
-					end
-					if widget:GetPushedTexture() then
-						widget:GetPushedTexture():SetTexCoord(unpack(E.TexCoords))
-					end
+					CropIcon(widget:GetNormalTexture())
+					CropIcon(widget:GetPushedTexture())
 				end
 				RegisterFrame(widget)
 			elseif widget:IsObjectType("EditBox") then

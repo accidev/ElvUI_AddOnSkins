@@ -297,7 +297,7 @@ local function SkinConfigator(lib)
 			tab.scroll.vScroll:Point("BOTTOMLEFT", tab.scroll, "BOTTOMRIGHT", 3, 14)
 		end
 		if tab.scroll.hScroll then
-			S:HandleScrollBar(tab.scroll.hScroll, true)
+			S:HandleScrollBar(tab.scroll.hScroll)
 			tab.scroll.hScroll:Point("TOPLEFT", tab.scroll, "BOTTOMLEFT", 18, -3)
 			tab.scroll.hScroll:Point("TOPRIGHT", tab.scroll, "BOTTOMRIGHT", -19, -3)
 		end
@@ -351,7 +351,7 @@ local function SkinConfigator(lib)
 						tab.scroll.vScroll:Point("BOTTOMLEFT", tab.scroll, "BOTTOMRIGHT", 3, 14)
 					end
 					if tab.scroll.hScroll then
-						S:HandleScrollBar(tab.scroll.hScroll, true)
+						S:HandleScrollBar(tab.scroll.hScroll)
 						tab.scroll.hScroll:Point("TOPLEFT", tab.scroll, "BOTTOMLEFT", 18, -3)
 						tab.scroll.hScroll:Point("TOPRIGHT", tab.scroll, "BOTTOMRIGHT", -19, -3)
 					end
@@ -412,7 +412,7 @@ local function SkinConfigator(lib)
 					sheet.panel.vScroll:Point("BOTTOMLEFT", sheet.panel, "BOTTOMRIGHT", 3, 19)
 				end
 				if sheet.panel.hScroll then
-					S:HandleScrollBar(sheet.panel.hScroll, true)
+					S:HandleScrollBar(sheet.panel.hScroll)
 					sheet.panel.hScroll:Point("TOPLEFT", sheet.panel, "BOTTOMLEFT", 18, -3)
 					sheet.panel.hScroll:Point("TOPRIGHT", sheet.panel, "BOTTOMRIGHT", -19, -3)
 				end

@@ -184,21 +184,10 @@ function EMB:SetHooks()
 end
 
 function EMB:DataPanelEnabled(right)
-	local db = E.db.datatexts
-	local enabled
+	local panels = E.db.datatexts.panels
+	local panel = panels and panels[right and "RightChatDataPanel" or "LeftChatDataPanel"]
 
-	if right then
-		enabled = db.rightChatPanel
-	else
-		enabled = db.leftChatPanel
-	end
-
-	if enabled == nil and db.panels then
-		local panel = db.panels[right and "RightChatDataPanel" or "LeftChatDataPanel"]
-		enabled = panel and panel.enable
-	end
-
-	return enabled
+	return panel and panel.enable
 end
 
 function EMB:WindowResize()

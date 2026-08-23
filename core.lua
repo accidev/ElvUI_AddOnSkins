@@ -11,29 +11,7 @@ local select, type = select, type
 local GetAddOnInfo = GetAddOnInfo
 local IsAddOnLoadOnDemand = IsAddOnLoadOnDemand
 
-if not S.SetTemplate then
-	local HandleScrollBar = S.HandleScrollBar
-
-	function S:SetTemplate(frame, ...)
-		frame:SetTemplate(...)
-	end
-
-	function S:CreateBackdrop(frame, ...)
-		frame:CreateBackdrop(...)
-	end
-
-	function S:SetInside(obj, ...)
-		obj:SetInside(...)
-	end
-
-	function S:Kill(object)
-		object:Kill()
-	end
-
-	function S:StripTextures(object, kill, alpha)
-		object:StripTextures(kill, alpha)
-	end
-
+if not S.StripTexture then
 	function S:StripTexture(object, texture, kill, alpha)
 		local path = lower(texture)
 
@@ -61,13 +39,6 @@ if not S.SetTemplate then
 				end
 			end
 		end
-	end
-
-	function S:HandleScrollBar(frame, thumbY, thumbX, template)
-		if thumbY == true then thumbY = nil end
-		if thumbX == true then thumbX = nil end
-
-		HandleScrollBar(self, frame, thumbY, thumbX, template)
 	end
 end
 

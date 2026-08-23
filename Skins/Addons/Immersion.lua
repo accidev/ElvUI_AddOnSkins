@@ -12,10 +12,10 @@ S:AddCallbackForAddon("Immersion", "Immersion", function()
 	ImmersionFrame.TalkBox.BackgroundFrame.backdrop:SetPoint('TOPLEFT', ImmersionFrame.TalkBox.BackgroundFrame, 'TOPLEFT', 8, -8)
 	ImmersionFrame.TalkBox.BackgroundFrame.backdrop:SetPoint('BOTTOMRIGHT', ImmersionFrame.TalkBox.BackgroundFrame, 'BOTTOMRIGHT', -8, 8)
 
-	S:StripTextures(ImmersionFrame.TalkBox.PortraitFrame)
+	ImmersionFrame.TalkBox.PortraitFrame:StripTextures()
 	S:HandleCloseButton(ImmersionFrame.TalkBox.MainFrame.CloseButton)
 
-	S:SetTemplate(ImmersionFrame.TalkBox.Hilite)
+	ImmersionFrame.TalkBox.Hilite:SetTemplate()
 	ImmersionFrame.TalkBox.Hilite:SetBackdropBorderColor(0, 0.44, .87, 1)
 	ImmersionFrame.TalkBox.Hilite:SetBackdropColor(0, 0, 0, 0)
 
@@ -31,7 +31,7 @@ S:AddCallbackForAddon("Immersion", "Immersion", function()
 	ImmersionFrame.TalkBox.Elements.backdrop:SetPoint('BOTTOMRIGHT', ImmersionFrame.TalkBox.Elements, 'BOTTOMRIGHT', -8, 8)
 	-- AS:CreateShadow(ImmersionFrame.TalkBox.Elements.Backdrop)
 
-	S:Kill(ImmersionFrame.TalkBox.MainFrame.Overlay)
+	ImmersionFrame.TalkBox.MainFrame.Overlay:Kill()
 
 	-- S:SkinStatusBar(ImmersionFrame.TalkBox.ReputationBar)
 	-- ImmersionFrame.TalkBox.ReputationBar:ClearAllPoints()
@@ -117,12 +117,12 @@ S:AddCallbackForAddon("Immersion", "Immersion", function()
 	ImmersionFrame:HookScript('OnUpdate', function(self)
 		for _, Button in ipairs(self.TitleButtons.Buttons) do
 			if Button and not Button.backdrop then
-				S:CreateBackdrop(Button,"Transparent")
+				Button:CreateBackdrop("Transparent")
 				Button:SetBackdrop(nil)
 				Button.Overlay:Hide()
 				-- AS:CreateShadow(Button.Backdrop)
-				S:SetInside(Button.backdrop, Button, 4, 4)
-				S:SetTemplate(Button.Hilite)
+				Button.backdrop:SetInside(Button, 4, 4)
+				Button.Hilite:SetTemplate()
 				Button.Hilite:SetBackdropBorderColor(0, 0.44, .87, 1)
 				Button.Hilite:SetBackdropColor(0, 0, 0, 0)
 				Button.Hilite:SetAllPoints(Button.backdrop)
@@ -149,7 +149,7 @@ S:AddCallbackForAddon("Immersion", "Immersion", function()
 
 		for _, Button in ipairs(self.TalkBox.Elements.Progress.Buttons) do
 			if Button and not Button.backdrop then
-				S:CreateBackdrop(Button)
+				Button:CreateBackdrop()
 				S:HandleIcon(Button.Icon)
 				Button.NameFrame:Hide()
 				Button.Border:Hide()
