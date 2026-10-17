@@ -83,7 +83,7 @@ S:AddCallbackForAddon("epgp", "epgp", function()
 	local EPGPUI = EPGP and EPGP:GetModule("ui", true)
 	if not EPGPUI then return end
 
-	local function SkinEPGP()
+	local function SkinMain()
 		-- Main Frame
 		if GetAddOnMetadata("EPGP","Version") == "6.01" then
 			EPAuc = true
@@ -96,13 +96,11 @@ S:AddCallbackForAddon("epgp", "epgp", function()
 		S:SetUIPanelWindowInfo(EPGPFrame, "width", nil, nil, nil, true)
 		S:SetBackdropHitRect(EPGPFrame)
 		-- for https://github.com/fxpw/EPGP
-		local num = select("#",EPGPFrame:GetChildren())
-		local closeButton, checkBoxBorder, main, _
-		if num == 8 then
-			closeButton, checkBoxBorder, _, _, _,_, main = EPGPFrame:GetChildren()
-		else
-			closeButton, checkBoxBorder, _, _, _, main = EPGPFrame:GetChildren()
-		end
+		local closeButton, checkBoxBorder = EPGPFrame:GetChildren()
+		local rowFrame = EPGPScrollFrame and EPGPScrollFrame:GetParent()
+		local tabl = rowFrame and rowFrame:GetParent()
+		local main = tabl and tabl:GetParent()
+		if not (closeButton and checkBoxBorder and tabl and tabl.headers and tabl.rowFrame and main) then return end
 
 		S:HandleCloseButton(closeButton, EPGPFrame.backdrop)
 
@@ -123,13 +121,19 @@ S:AddCallbackForAddon("epgp", "epgp", function()
 		EPGPScrollFrameScrollBar:Point("TOPLEFT", EPGPScrollFrame, "TOPRIGHT", 3, -19)
 		EPGPScrollFrameScrollBar:Point("BOTTOMLEFT", EPGPScrollFrame, "BOTTOMRIGHT", 3, 19)
 
-		local awardEP, awardGP, logButton, decay, tabl
-		num = select("#",main:GetChildren())
-		if num == 5 then
-			awardEP, awardGP, logButton, decay, tabl = main:GetChildren()
-		else
-			awardEP, logButton, decay, tabl = main:GetChildren()
+		local buttons = {}
+		for _, child in ipairs({main:GetChildren()}) do
+			if child ~= tabl and child:GetObjectType() == "Button" then
+				buttons[#buttons + 1] = child
+			end
 		end
+		local awardEP, awardGP, logButton, decay
+		if #buttons >= 4 then
+			awardEP, awardGP, logButton, decay = unpack(buttons)
+		else
+			awardEP, logButton, decay = unpack(buttons)
+		end
+
 		for _, header in ipairs(tabl.headers) do
 			header:StripTextures()
 			header:StyleButton()
@@ -138,6 +142,17 @@ S:AddCallbackForAddon("epgp", "epgp", function()
 		for _, row in ipairs(tabl.rowFrame.rows) do
 			row.check:SetDrawLayer("BORDER")
 		end
+
+		if EPGPStandingsSearch then
+			S:HandleEditBox(EPGPStandingsSearch)
+			EPGPStandingsSearch:Height(20)
+			EPGPStandingsSearch:SetTextInsets(3, 3, 0, 0)
+			if EPGPStandingsSearch.hint then
+				EPGPStandingsSearch.hint:Point("LEFT", EPGPStandingsSearch, "LEFT", 3, 0)
+			end
+		end
+
+		if not (awardEP and logButton and decay) then return end
 
 		S:HandleButton(awardEP)
 		if awardGP then
@@ -150,8 +165,10 @@ S:AddCallbackForAddon("epgp", "epgp", function()
 		decay:Point("RIGHT", logButton, "LEFT", -3, 0)
 
 		local statusText = select(2, main:GetRegions())
-		statusText:Point("BOTTOMLEFT", awardEP, "TOPLEFT", 0, 7)
-		statusText:Point("BOTTOMRIGHT", logButton, "TOPRIGHT", 0, 7)
+		if statusText then
+			statusText:Point("BOTTOMLEFT", awardEP, "TOPLEFT", 0, 7)
+			statusText:Point("BOTTOMRIGHT", logButton, "TOPRIGHT", 0, 7)
+		end
 		-- logButton:Point("BOTTOMRIGHT", -5, 0)
 		-- decay:Point("RIGHT", logButton, "LEFT", -3, 0)
 
@@ -159,6 +176,9 @@ S:AddCallbackForAddon("epgp", "epgp", function()
 		-- statusText:Point("BOTTOMLEFT", awardEP, "TOPLEFT", 0, 7)
 		-- statusText:Point("BOTTOMRIGHT", logButton, "TOPRIGHT", 0, 7)
 
+	end
+
+	local function SkinSideFrames()
 		-- First Side Frame
 		EPGPSideFrame:StripTextures()
 		EPGPSideFrame:SetTemplate("Transparent")
@@ -263,6 +283,9 @@ S:AddCallbackForAddon("epgp", "epgp", function()
 			parentFrame.decButton:Point("RIGHT", -13, 0)
 			parentFrame.incButton:Point("RIGHT", parentFrame.decButton, "LEFT", -5, 0)
 		end
+	end
+
+	local function SkinLog()
 		-- Log Frame
 		EPGPLogFrame:EnableMouse(true)
 		EPGPLogFrame:StripTextures()
@@ -272,7 +295,7 @@ S:AddCallbackForAddon("epgp", "epgp", function()
 		-- EPGPLogFrame:SetMaxResize(1200, 424)
 		EPGPLogFrame:Point("TOPLEFT", EPGPFrame, "TOPRIGHT", -33, -12)
 
-		num = select("#",EPGPLogFrame:GetChildren())
+		local num = select("#",EPGPLogFrame:GetChildren())
 		local searchBox, searchButt, sizer, closeButton2, export, import, trimLog, undo, redo, scrollParent
 		if num >= 10 and EPGPSearchEditBox then
 			searchBox, searchButt, sizer, closeButton2, export, import, trimLog, undo, redo, scrollParent = EPGPLogFrame:GetChildren()
@@ -391,6 +414,13 @@ S:AddCallbackForAddon("epgp", "epgp", function()
 		-- end
 
 	end
+
+	local function SkinEPGP()
+		pcall(SkinMain)
+		pcall(SkinSideFrames)
+		pcall(SkinLog)
+	end
+
 	if EPGPFrame then
 		SkinEPGP()
 	else
