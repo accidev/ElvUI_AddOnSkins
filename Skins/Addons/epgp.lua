@@ -145,7 +145,7 @@ S:AddCallbackForAddon("epgp", "epgp", function()
 
 		if EPGPStandingsSearch then
 			S:HandleEditBox(EPGPStandingsSearch)
-			EPGPStandingsSearch:Height(20)
+			EPGPStandingsSearch:Height(18)
 			EPGPStandingsSearch:SetTextInsets(3, 3, 0, 0)
 			if EPGPStandingsSearch.hint then
 				EPGPStandingsSearch.hint:Point("LEFT", EPGPStandingsSearch, "LEFT", 3, 0)
