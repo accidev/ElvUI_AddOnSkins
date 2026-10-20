@@ -257,10 +257,19 @@ S:AddCallbackForAddon("AdiBags", "AdiBags", function()
 		frame.vendorGraysButton:GetPushedTexture():SetTexCoord(unpack(E.TexCoords))
 		frame.vendorGraysButton:GetPushedTexture():SetInside()
 		frame.vendorGraysButton:StyleButton(nil, true)
-		frame.vendorGraysButton.ttText = L["Vendor / Delete Grays"]
-		frame.vendorGraysButton:SetScript("OnEnter", B.Tooltip_Show)
+		frame.vendorGraysButton.ttText = L["Vendor/Delete Grays"]
+		frame.vendorGraysButton:SetScript("OnEnter", function(self)
+			local junk = AdiBags:GetModule("Junk", true)
+			self.ttText2, self.ttText2desc = nil, nil
+			if junk and junk.GetShiftClickHint then
+				self.ttText2, self.ttText2desc = junk:GetShiftClickHint()
+			end
+			B.Tooltip_Show(self)
+		end)
 		frame.vendorGraysButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
 		frame.vendorGraysButton:SetScript("OnClick", function()
+			local junk = IsShiftKeyDown() and AdiBags:GetModule("Junk", true)
+			if junk and junk.HandleShiftClick and junk:HandleShiftClick() then return end
 			if not B.SellFrame then B:CreateSellFrame() end
 			B:VendorGrayCheck()
 		end)
